@@ -19,4 +19,3 @@ export default async function handler(req){
   if(!timingSafeEqual(sig, exp)) return new Response('Invalid signature',{status:401});
   return new Response('OK',{status:200});
 }
-add webhook
