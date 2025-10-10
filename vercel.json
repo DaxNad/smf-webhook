@@ -1,5 +1,7 @@
 {
   "functions": {
-    "api/webhook.js": { "runtime": "edge" }
+    "api/webhook.js": {
+      "runtime": "nodejs20.x"
+    }
   }
 }
