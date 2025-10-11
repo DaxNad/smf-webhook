@@ -1,12 +1,9 @@
 {
-  "functions": {
-    "api/webhook.js": {
-      "runtime": "nodejs18.x",
-      "memory": 128,
-      "maxDuration": 10
-    }
-  },
+  "version": 2,
+  "builds": [
+    { "src": "api/webhook.php", "use": "@vercel/php@1.0.0" }
+  ],
   "routes": [
-    { "src": "/api/webhook", "dest": "/api/webhook.js" }
+    { "src": "/api/(.*)", "dest": "/api/webhook.php" }
   ]
 }
