@@ -1,0 +1,29 @@
+import crypto from "crypto";
+
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", c => chunks.push(c));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
+
+export default async function handler(req, res) {
+  if (req.method === "GET") return res.status(200).send("OK");
+  if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
+
+  const secret = process.env.WEBHOOK_SECRET || "";
+  const sig = req.headers["x-hub-signature-256"] || "";
+
+  const raw = await readRawBody(req);
+  const expected = "sha256=" + crypto.createHmac("sha256", secret).update(raw).digest("hex");
+
+  const ok = sig.length === expected.length &&
+             crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+  if (!ok) return res.status(401).send("Invalid signature");
+
+  const event = req.headers["x-github-event"] || "";
+  console.log("github-event:", event);
+  return res.status(200).json({ ok: true, event });
+}
