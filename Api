@@ -10,18 +10,20 @@ function readRawBody(req) {
 }
 
 export default async function handler(req, res) {
+  // Ping rapido
   if (req.method === "GET") {
-    res.statusCode = 200;
-    return res.end("OK");
+    res.status(200).send("OK");
+    return;
   }
 
   if (req.method !== "POST") {
-    res.statusCode = 405;
-    return res.end("Method Not Allowed");
+    res.status(405).send("Method Not Allowed");
+    return;
   }
 
   const secret = process.env.WEBHOOK_SECRET || "";
   const sig = req.headers["x-hub-signature-256"] || "";
+
   const raw = await readRawBody(req);
   const expected = "sha256=" + crypto.createHmac("sha256", secret).update(raw).digest("hex");
 
@@ -29,13 +31,12 @@ export default async function handler(req, res) {
              crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
 
   if (!ok) {
-    res.statusCode = 401;
-    return res.end("Invalid signature");
+    res.status(401).send("Invalid signature");
+    return;
   }
 
-  const event = req.headers["x-github-event"];
-  console.log("Evento:", event);
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ ok: true, event }));
+  const event = req.headers["x-github-event"] || "";
+  console.log("github-event:", event);
+
+  res.status(200).json({ ok: true, event });
 }
