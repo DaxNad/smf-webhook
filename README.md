@@ -7,3 +7,4 @@ Deploy gestito tramite **Vercel** e collegato tramite webhook GitHub App.
 Struttura principale:
 - `/api` → endpoint API
 - `vercel.json` → configurazione deploy
+<!-- test -->
