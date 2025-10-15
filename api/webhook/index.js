@@ -27,6 +27,8 @@ export default async function handler(req, res) {
   const sig = req.headers["x-hub-signature-256"] || "";
   const raw = await readRawBody(req);
   const expected = "sha256=" + crypto.createHmac("sha256", secret).update(raw).digest("hex");
+  console.log("signature header:", sig.slice(0, 20));
+console.log("expected value:", expected.slice(0, 20));
   const ok = sig.length === expected.length &&
              crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
   if (!ok) return res.status(401).send("Invalid signature");
