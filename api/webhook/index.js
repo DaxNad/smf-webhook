@@ -106,3 +106,4 @@ console.log("expected value:", expected.slice(0, 20));
     }
   }
 }
+export const config = { api: { bodyParser: false } };
