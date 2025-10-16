@@ -32,6 +32,15 @@ export default async function handler(req, res) {
 
   // 3) se manca l’header, errore
   if (!sigHdr) return res.status(401).send("Missing signature header");
+  
+if (process.env.SKIP_VERIFY === "1") {
+  console.log("verify:SKIPPED");
+} else {
+  const ok =
+    sigHdr.length === expected.length &&
+    crypto.timingSafeEqual(Buffer.from(sigHdr), Buffer.from(expected));
+  if (!ok) return res.status(401).send("Invalid signature");
+}
 
   // 4) confronto a tempo costante
   const ok =
